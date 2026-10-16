@@ -1,0 +1,10 @@
+langchain
+langgraph
+langchain-groq
+pydantic
+python-dotenv
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+email-validator

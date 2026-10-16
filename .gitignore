@@ -1,0 +1,54 @@
+# Python virtual environments
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# uv
+uv.lock
+
+# Node modules
+node_modules/
+dist/
+.cache/
+
+# Environment / secrets
+.env
+credentials.json
+token.json
+
+# Database files
+*.db
+*.sqlite
+
+# Build output
+build/
+*.egg-info/
+
+# OS files
+.DS_Store
+desktop.ini
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Large binary files
+*.exe
+*.zip
+*.tar.gz
+*.whl
+
+# ChromaDB vector store
+database/
+
+# Git submodule internals
+*/.git/

@@ -1,0 +1,5 @@
+Hi John,
+
+I was impressed by Microsoft's continued evolution from a software leader to a diversified tech giant, particularly the strategic integration of generative AI into core workflows via Copilot and the scaling of Azure infrastructure. Your focus on empowering organizations through these integrated ecosystems aligns perfectly with the current industry shift toward AI-driven efficiency.
+
+At SmartOps AI, we specialize in helping businesses like yours streamline operations and accelerate
