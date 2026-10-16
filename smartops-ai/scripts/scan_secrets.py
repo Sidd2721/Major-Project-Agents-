@@ -34,6 +34,7 @@ for root, dirs, files in os.walk(ROOT):
             continue
         for label, pat in PATTERNS.items():
             for m in pat.finditer(text):
+                val = m.group()
                 # Don't flag placeholders
                 if "YOUR_" in val or "your_" in val or "xxx" in val.lower() or "REPLACE" in val:
                     continue

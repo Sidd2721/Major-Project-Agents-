@@ -50,20 +50,30 @@ def wait_http(url, timeout=30, label=""):
     print(f"  ⚠️  {label} did not respond at {url} within {timeout}s")
     return False
 
-def start(cmd, cwd, label):
+LOGS_DIR = ROOT / "logs"
+LOGS_DIR.mkdir(exist_ok=True)
+
+def start(cmd, cwd, label, log_name=None):
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
     use_shell = False
+    
+    if log_name is None:
+        log_name = label.split()[0].lower().replace(":", "").replace("/", "_")
+    log_file = open(LOGS_DIR / f"{log_name}.log", "w", encoding="utf-8", errors="replace")
+
     if WIN and cmd:
         if cmd[0] == "npm":
-            cmd[0] = shutil.which("npm") or "npm.cmd"
+            cmd_exe = shutil.which("npm") or "npm.cmd"
+            cmd[0] = cmd_exe
             use_shell = True
+            
     p = subprocess.Popen(
         cmd, cwd=str(cwd), env=env,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        stdout=log_file, stderr=subprocess.STDOUT,
         shell=use_shell
     )
-    print(f"  ▶  {label} (PID {p.pid})")
+    print(f"  ▶  {label} (PID {p.pid})", flush=True)
     return p
 
 procs = []
