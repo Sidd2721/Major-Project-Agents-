@@ -44,61 +44,156 @@ Traditional enterprise workflows suffer from severe operational friction:
 
 ## 🏗️ System Architecture
 
-### High-Level Topology
-```
-                                  ┌───────────────────────────────┐
-                                  │   Central Operations Hub      │
-                                  │       http://localhost:8080   │
-                                  └───────────────┬───────────────┘
-                                                  │
-             ┌────────────────────────────────────┼────────────────────────────────────┐
-             ▼                                    ▼                                    ▼
-┌─────────────────────────┐          ┌─────────────────────────┐          ┌─────────────────────────┐
-│ Customer Support Agent  │          │ Sales Outreach Assistant│          │ Voice Simulation Agent  │
-│  - Portal (:5173)       │          │  - UI & API (:5175)     │          │  - Voice Console (:8765)│
-│  - Dashboard (:5174)    │          │  - LangGraph (12 Nodes) │          │  - WebSocket Server     │
-│  - FastAPI API (:8000)  │          │  - ChromaDB Vector RAG  │          │  - Live SQLite Grounding│
-│  - Worker (3s polling)  │          │  - 5 Public Sources     │          │  - Dual Voice Personas  │
-│  - SQLite Database      │          │  - Zero Auto-Sending    │          │  - Audio Waveform UI    │
-└────────────┬────────────┘          └────────────┬────────────┘          └────────────┬────────────┘
-             │                                    │                                    │
-             ▼                                    ▼                                    ▼
-┌─────────────────────────┐          ┌─────────────────────────┐          ┌─────────────────────────┐
-│ SQLite (complaints.db)  │          │ ChromaDB Case Studies   │          │ Live Query Context      │
-│  - P1-P4 Classification │          │  - Spark Retail Match   │          │  - Reads Open Tickets   │
-│  - Sentiment Analysis   │          │  - Benchmarked Proof    │          │  - Answers DB Counts    │
-└─────────────────────────┘          └─────────────────────────┘          └─────────────────────────┘
+### High-Level Topology Diagram
+
+```mermaid
+flowchart TD
+    subgraph Clients["🌐 Unified Client Layer"]
+        HUB["🏠 Central Operations Hub<br/><code>http://localhost:8080</code>"]
+        CUST["💻 Customer Support Portal<br/><code>http://localhost:5173</code>"]
+        EMP["📊 Employee Support Dashboard<br/><code>http://localhost:5174</code>"]
+        SALES_UI["💼 Sales Outreach Console<br/><code>http://localhost:5175</code>"]
+        VOICE_UI["🎙️ Conversational Voice Console<br/><code>http://localhost:8765</code>"]
+    end
+
+    subgraph Backend["⚙️ Autonomous Agent Execution Layer"]
+        CSA_API["Customer Support API<br/>FastAPI <code>:8000</code> /docs"]
+        CSA_WRK["Background AI Worker<br/>3s Polling Loop"]
+        SALES_ENG["Sales Intelligence Engine<br/>LangGraph 12-Node Machine<br/>5 Source Web Extractors"]
+        VOICE_SRV["Voice Agent Server<br/>FastAPI + WebSockets<br/>Pipecat Audio Engine"]
+    end
+
+    subgraph Failover["🛡️ 3-Tier Multi-LLM Failover Engine"]
+        ROUTER{"Mode & Key Router"}
+        GROQ["Primary: Groq LPU<br/><code>llama-3.3-70b-versatile</code>"]
+        GEMINI["Fallback 1: Google Gemini<br/><code>gemini-2.0-flash</code>"]
+        MOCK["Fallback 2: Deterministic Mock<br/><code>100% Offline / Zero API Calls</code>"]
+    end
+
+    subgraph Persistence["💾 Local Persistence & Grounding Layer"]
+        SQLITE[("SQLite Database<br/><code>complaints.db</code><br/>P1-P4 Triage & Tickets")]
+        CHROMA[("ChromaDB Vector Store<br/>Case Study Embeddings RAG")]
+    end
+
+    %% Client Interactions
+    HUB -->|Live Health Polling & Launchpad| CSA_API
+    HUB -->|Live Health Polling & Launchpad| SALES_ENG
+    HUB -->|Live Health Polling & Launchpad| VOICE_SRV
+
+    CUST -->|POST /complaints| CSA_API
+    CSA_API -->|Store 'new' ticket| SQLITE
+    CSA_WRK -->|Poll 'new' tickets| SQLITE
+    CSA_WRK -->|Invoke Triage & Sentiment| ROUTER
+    CSA_WRK -->|Update P1-P4, Actions, Status| SQLITE
+    EMP -->|GET /complaints| CSA_API
+    CSA_API -->|Read triaged records| SQLITE
+
+    SALES_UI -->|POST /api/prepare| SALES_ENG
+    SALES_ENG -->|Semantic Vector Match| CHROMA
+    SALES_ENG -->|Synthesize Prospect Research| ROUTER
+    SALES_ENG -->|Human Review Draft & Call Script| SALES_UI
+
+    VOICE_UI <-->|Bidirectional Audio Stream| VOICE_SRV
+    VOICE_SRV -->|Query Live Ticket Metrics| SQLITE
+    VOICE_SRV -->|Context-Grounded Response| ROUTER
+
+    %% LLM Routing
+    ROUTER -->|LLM_MODE=live| GROQ
+    GROQ -.->|429 / 500 / Timeout| GEMINI
+    GEMINI -.->|Missing Keys / Network Loss| MOCK
+    ROUTER -->|LLM_MODE=mock (Offline)| MOCK
+
+    classDef client fill:#f8fafc,stroke:#3b82f6,stroke-width:2px;
+    classDef agent fill:#f0fdf4,stroke:#16a34a,stroke-width:2px;
+    classDef llm fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef db fill:#fdf2f8,stroke:#ec4899,stroke-width:2px;
+
+    class HUB,CUST,EMP,SALES_UI,VOICE_UI client;
+    class CSA_API,CSA_WRK,SALES_ENG,VOICE_SRV agent;
+    class ROUTER,GROQ,GEMINI,MOCK llm;
+    class SQLITE,CHROMA db;
 ```
 
+---
+
+### Cross-Agent Data & Operational Lifecycle
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 Business User / Evaluator
+    participant Hub as 🏠 Central Hub (:8080)
+    participant CSA as 🛡️ Support Agent (:8000/:5173/:5174)
+    participant Sales as 💼 Sales Assistant (:5175)
+    participant Voice as 🎙️ Voice Agent (:8765)
+    participant DB as 💾 SQLite & ChromaDB
+    participant LLM as 🧠 3-Tier Multi-LLM Router
+
+    Note over Hub: Continuous System Health Supervision
+    Hub->>CSA: GET /health (Status Dot: 🟢 Active)
+    Hub->>Sales: GET /health (Status Dot: 🟢 Active)
+    Hub->>Voice: GET /api/health (Status Dot: 🟢 Active)
+
+    rect rgb(240, 248, 255)
+    Note over User,CSA: 1. Autonomous Customer Support Triage Flow
+    User->>CSA: Submit ticket via Customer Portal (:5173)
+    CSA->>DB: Ingest complaint (status="new")
+    CSA->>LLM: Perform Priority, Sentiment, and Security Analysis
+    LLM-->>CSA: Priority=P1, Reason="Physical defect / safety risk", Auto-resolve=False
+    CSA->>DB: Update record (status="escalated", priority="P1")
+    User->>CSA: Inspect triaged queue on Employee Dashboard (:5174)
+    end
+
+    rect rgb(255, 248, 240)
+    Note over User,Sales: 2. B2B Sales Prospect Intelligence & Outreach
+    User->>Sales: Select prospect & click "Prepare Outreach" (:5175)
+    Sales->>Sales: Parallel fetch from 5 public web sources
+    Sales->>DB: Vector search similar enterprise case study (ChromaDB)
+    DB-->>Sales: Match: "Spark Retail" (85% query automation, $150k lift)
+    Sales->>LLM: Calculate fit score (out of 10) & generate draft
+    LLM-->>Sales: Verdict="Good fit" (8.5/10), Subject, Email Body, 3-Step Call Script
+    Sales-->>User: Display verdict & draft for human review (Zero Auto-Sending)
+    end
+
+    rect rgb(248, 255, 240)
+    Note over User,Voice: 3. Grounded Conversational Voice Interaction
+    User->>Voice: Speak query: "How many open P1 tickets are there?" (:8765)
+    Voice->>DB: Query live SQLite metrics: COUNT(WHERE priority='P1')
+    DB-->>Voice: Live count = 5 open P1 tickets
+    Voice->>LLM: Ground speech context in exact DB count
+    LLM-->>Voice: Synthesize natural dialogue without hallucination
+    Voice-->>User: Spoken audio: "According to our live database, there are 5 open P1 tickets..."
+    end
+```
+
+---
+
 ### 3-Tier Multi-LLM Failover Engine
+
+```mermaid
+flowchart LR
+    ENTRY([LLM Request In]) --> CHECK{Check LLM_MODE}
+    
+    CHECK -->|LLM_MODE=mock| MOCK[Fallback 2: Mock Engine<br/>100% Offline / Deterministic]
+    CHECK -->|LLM_MODE=replay| REPLAY[Replay Engine<br/>Disk Verified Runs]
+    CHECK -->|LLM_MODE=live| GROQ[Primary: Groq LPU<br/>Llama-3.3-70b-versatile]
+
+    GROQ -->|Success 200| OUT([Response Delivered])
+    GROQ -.->|429 Rate Limit / 500 / Timeout| GEMINI[Fallback 1: Google Gemini<br/>gemini-2.0-flash]
+    GEMINI -->|Success 200| OUT
+    GEMINI -.->|Missing Keys / Network Offline| MOCK
+    MOCK --> OUT
+    REPLAY --> OUT
 ```
-┌────────────────────────────────────────────────────────┐
-│                   LLM Request Entry                    │
-└──────────────────────────┬─────────────────────────────┘
-                           │
-             ┌─────────────┴─────────────┐
-             ▼                           ▼
-      [LLM_MODE=mock]             [LLM_MODE=live]
-             │                           │
-             │                           ▼
-             │               ┌───────────────────────┐
-             │               │   Primary: Groq LPU   │
-             │               │  (Llama-3.3-70b-vers) │
-             │               └───────────┬───────────┘
-             │                           │ (If 429/500/timeout)
-             │                           ▼
-             │               ┌───────────────────────┐
-             │               │ Fallback 1: Gemini AI │
-             │               │   (gemini-2.5-flash)  │
-             │               └───────────┬───────────┘
-             │                           │ (If keys missing/offline)
-             │                           ▼
-             └───────────────────► ┌───────────────────────┐
-                                   │ Fallback 2: Mock/Sync │
-                                   │  Deterministic Engine │
-                                   │   (Zero API Calls)    │
-                                   └───────────────────────┘
-```
+
+---
+
+## 🖼️ User Interface & Dashboard Gallery
+
+| Platform Hub (:8080) | Employee Support Dashboard (:5174) | Sales Outreach Assistant (:5175) |
+|---|---|---|
+| ![Central Hub](smartops-ai/docs/screens/central_hub.png) | ![Employee Dashboard](smartops-ai/docs/screens/employee_dashboard.png) | ![Sales Dashboard](smartops-ai/docs/screens/sales_dashboard.png) |
+| *Unified launchpad with live health status dots and architectural guides* | *Live triaged customer tickets, P1–P4 filters, and response drafts* | *Prospect research engine with objective Fit Score (out of 10) and draft email* |
 
 ---
 
@@ -144,9 +239,9 @@ cd Major-Project-Agents-
 
 ---
 
-### Step 3: Run the Automated 1-Step Setup
+### Step 3: Run the Automated Setup
 
-You can set up the entire platform using either the Windows batch script or Python:
+You can set up the entire platform, or selectively install only a specific agent:
 
 #### Option A: Windows 1-Click Batch Script (Recommended for Windows)
 ```cmd
@@ -154,11 +249,20 @@ setup.bat
 ```
 *(You can also simply double-click `setup.bat` in Windows File Explorer!)*
 
-#### Option B: PowerShell / Terminal Command
+#### Option B: PowerShell / Terminal Command (Full Platform)
 ```powershell
 python setup.py
 ```
-*(If Python was installed via the Python Launcher, run: `py -3.11 setup.py`)*
+*(If Python was installed via the Python Launcher, run: `py -3 setup.py`)*
+
+#### Option C: Selective Agent Setup (Fast / Minimal Disk Footprint)
+Install dependencies and provision the virtual environment for **only** the agent you need:
+```powershell
+python smartops-ai/scripts/setup.py --agent sales    # Only Sales Outreach Assistant
+python smartops-ai/scripts/setup.py --agent support  # Only Customer Support Agent + React UIs
+python smartops-ai/scripts/setup.py --agent voice    # Only Conversational Voice Agent
+python smartops-ai/scripts/setup.py --agent all      # Complete platform (default)
+```
 
 #### What the automated setup script does:
 1. **System Detection**: Verifies Python 3.10+ and Node.js 18+ on your system.
@@ -193,22 +297,20 @@ SmartOps AI is built with an offline-first guarantee. You can run the entire pla
 
 ---
 
-### Step 5: Start All Services in 1 Command
+### Step 5: Start Services (Unified Platform vs Independent Agent)
 
-Start all 6 services simultaneously using either the batch launcher or Python:
+SmartOps AI gives you two flexible ways to launch the platform:
 
-#### Option A: Windows 1-Click Batch Launcher
+#### Option 1: Start All 6 Services in 1 Command (Recommended)
+
+Start all services simultaneously using either the batch launcher or Python:
+
 ```cmd
 run_all.bat
 ```
-*(Or double-click `run_all.bat` in Windows File Explorer)*
+*(Or in PowerShell: `python run_all.py` / `py -3 run_all.py`)*
 
-#### Option B: Terminal Command
-```powershell
-python run_all.py
-```
-
-The launcher starts all background processes and prints a clean service status table:
+The launcher automatically verifies required ports are free, starts all background processes, and prints a live URL table:
 ```
 ======================================================================
 🚀 SMARTOPS AI — MULTI-AGENT PLATFORM LAUNCHER
@@ -224,15 +326,56 @@ The launcher starts all background processes and prints a clean service status t
 - Open **[http://localhost:8080](http://localhost:8080)** in your browser to explore the platform!
 - To cleanly stop all services at any time, press `Ctrl+C` in the launcher terminal.
 
+#### Option 2: Independent Agent Execution (One Command Per Agent)
+
+To run **only one specific agent** without starting unnecessary processes:
+
+```powershell
+# 🛡️ Customer Support Agent only (API :8000, Worker, Customer UI :5173, Employee UI :5174)
+python smartops-ai/scripts/run_agent.py support
+
+# 💼 Sales Outreach Assistant only (Dashboard :5175)
+python smartops-ai/scripts/run_agent.py sales
+
+# 🎙️ Conversational Voice Agent only (Audio Console :8765)
+python smartops-ai/scripts/run_agent.py voice
+
+# 🏠 Central Operations Hub only (Management Dashboard :8080)
+python smartops-ai/scripts/run_agent.py hub
+
+# 🚀 All agents together
+python smartops-ai/scripts/run_agent.py all
+```
+
+**What each independent run command guarantees:**
+1. **Port Conflict Protection**: Verifies required ports are free before launching.
+2. **Key Inspection**: Scans local `.env` and notifies if optional API keys are missing (automatically activating deterministic mock mode).
+3. **Selective Process Spawning**: Starts **only** the processes that specific agent needs.
+4. **Health Check Validation**: Polls health endpoints until HTTP 200 is confirmed.
+5. **Clean Teardown**: Pressing `Ctrl+C` gracefully stops all child processes and frees ports.
+
 ---
 
-### Step 6: Run the 17-Point Automated Verification Suite
+### Step 6: Automated Verification & Health Checks
 
-To verify that all services, APIs, priority triage algorithms, and security defenses are working with mathematical certainty, run:
+SmartOps AI provides two built-in verification suites:
+
+#### 1. Full 17-Point Audit Suite (Generates Formal Evidence Report)
 ```cmd
 verify.bat
 ```
 *(Or in PowerShell: `python verify.py`)*
+
+Runs 17 automated tests and generates a certified audit report in `smartops-ai/docs/VERIFICATION.md`.
+
+#### 2. Live Localhost Workflow Test (Tests Running Services)
+While services are running, verify real-time data flows across all 3 agents in 5 seconds:
+```powershell
+python smartops-ai/scripts/test_live_agents.py
+```
+- ✅ Submits real P1 emergency complaint and verifies background worker triage & escalation
+- ✅ Tests Sales prospect store, 5-source evaluation, and fit scoring
+- ✅ Queries Voice Agent and verifies live SQLite database grounding context
 
 This runs 17 automated tests and generates a certified audit report in `smartops-ai/docs/VERIFICATION.md`:
 ```
@@ -364,8 +507,11 @@ Major-Project-Agents-/
 | Script | Command | Purpose |
 |---|---|---|
 | `setup.bat` / `setup.py` | `setup.bat` or `python setup.py` | Complete 1-click bootstrap: creates venvs, installs dependencies, runs `npm install`, seeds DB, sets offline defaults. |
-| `run_all.bat` / `run_all.py` | `run_all.bat` or `python run_all.py` | Starts all 6 background services and displays a live formatted status table. |
+| `scripts/setup.py` | `python smartops-ai/scripts/setup.py --agent <name>` | Selective installer: installs only support, sales, or voice agent dependencies. |
+| `run_all.bat` / `run_all.py` | `run_all.bat` or `python run_all.py` | Starts all 6 background services simultaneously and displays live URL status table. |
+| `scripts/run_agent.py` | `python smartops-ai/scripts/run_agent.py <agent>` | Starts only a specific agent independently (`support`, `sales`, `voice`, `hub`, `all`). |
 | `verify.bat` / `verify.py` | `verify.bat` or `python verify.py` | Runs the 17-point automated verification suite and writes evidence to `docs/VERIFICATION.md`. |
+| `scripts/test_live_agents.py` | `python smartops-ai/scripts/test_live_agents.py` | Live localhost verification: tests real-time data flows across Support, Sales, and Voice in 5s. |
 | `scripts/seed_demo.py` | `python smartops-ai/scripts/seed_demo.py` | Idempotent database reset: wipes database and restores 12 standard demo tickets and 5 CRM prospects. |
 | `scripts/scan_secrets.py` | `python smartops-ai/scripts/scan_secrets.py` | Security hygiene scanner: scans the repository for leaked API keys, tokens, or credentials. |
 

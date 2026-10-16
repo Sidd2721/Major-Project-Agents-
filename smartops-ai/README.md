@@ -26,8 +26,9 @@
 
 ---
 
-## 🚀 Quick Start (One Command)
+## 🚀 Quick Start Running Guide
 
+### Option 1: Start All Services (Unified Launcher)
 From the repository root or `smartops-ai/`:
 ```powershell
 # 1. Install all dependencies and seed database (first time only)
@@ -40,4 +41,20 @@ python scripts/run_all.py
 python scripts/verify.py
 ```
 
-For full setup documentation on fresh machines, see the root [README.md](../README.md).
+### Option 2: Run Individual Agents Independently
+```powershell
+python scripts/run_agent.py support   # Support API :8000 + Worker + Portals :5173/:5174
+python scripts/run_agent.py sales     # Sales Outreach Assistant :5175 only
+python scripts/run_agent.py voice     # Conversational Voice Agent :8765 only
+python scripts/run_agent.py hub       # Central Operations Hub :8080 only
+python scripts/run_agent.py all       # All services simultaneously
+```
+
+### Option 3: Live Localhost Verification
+While services are running, verify live data flows across all 3 agents in 5 seconds:
+```powershell
+python scripts/test_live_agents.py
+```
+
+For full setup documentation, architecture diagrams, and academic viva resources, see the root [README.md](../README.md).
+
