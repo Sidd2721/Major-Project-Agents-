@@ -1,6 +1,7 @@
 from fastapi import FastAPI,HTTPException,Query
 from pydantic import BaseModel, EmailStr
 from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
 
 from .db import SessionLocal, engine
 from .models import Base
@@ -143,8 +144,9 @@ def analytics_trends():
     return data
 
 
-# ── Health & mode endpoints (used by Hub status dots) ──────────────
+# ── Health, mode & admin demo reset endpoints ─────────────────────────
 import os as _os
+from fastapi import Header
 
 @app.get("/health")
 def health():
@@ -152,5 +154,28 @@ def health():
 
 @app.get("/api/mode")
 def api_mode():
-    mode = _os.getenv("LLM_MODE", "live")
-    return {"mode": mode, "service": "customer-support-agent"}
+    mode = _os.getenv("LLM_MODE", "mock").lower()
+    return {"mode": mode, "service": "customer-support-agent", "degraded": (mode == "mock")}
+
+@app.post("/demo/reset")
+def demo_reset(
+    authorization: Optional[str] = Header(None),
+    x_admin_key: Optional[str] = Header(None),
+    key: Optional[str] = Query(None)
+):
+    expected = _os.getenv("ADMIN_KEY", "smartops-admin-2026")
+    provided = x_admin_key or key
+    if not provided and authorization:
+        parts = authorization.split()
+        if len(parts) == 2 and parts[0].lower() in ["bearer", "basic"]:
+            provided = parts[1]
+        else:
+            provided = authorization
+    if provided != expected:
+        raise HTTPException(status_code=403, detail="Unauthorized: Invalid admin key")
+    
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+    from scripts.seed_demo import run_reset
+    result = run_reset()
+    return result

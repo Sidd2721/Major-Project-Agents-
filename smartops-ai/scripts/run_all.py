@@ -5,7 +5,7 @@ Run: python scripts/run_all.py
 Checks ports, starts backend, worker, React apps, voice server, hub.
 Prints a live URL table. Stops everything cleanly on Ctrl+C.
 """
-import subprocess, sys, time, os, socket, signal, threading
+import subprocess, sys, time, os, socket, signal, threading, shutil
 from pathlib import Path
 from urllib.request import urlopen
 from urllib.error import URLError
@@ -53,9 +53,15 @@ def wait_http(url, timeout=30, label=""):
 def start(cmd, cwd, label):
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
+    use_shell = False
+    if WIN and cmd:
+        if cmd[0] == "npm":
+            cmd[0] = shutil.which("npm") or "npm.cmd"
+            use_shell = True
     p = subprocess.Popen(
         cmd, cwd=str(cwd), env=env,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        shell=use_shell
     )
     print(f"  ▶  {label} (PID {p.pid})")
     return p

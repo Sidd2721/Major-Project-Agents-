@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartOps AI — Living Design System & Style Guide</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    body {
+      background: var(--color-neutral-900, #0f172a);
+      color: var(--color-neutral-100, #f1f5f9);
+      font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      margin: 0;
+      padding: 40px 24px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { font-size: 20px; margin-top: 32px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .color-swatch { width: 120px; height: 80px; border-radius: 8px; display: flex; align-items: flex-end; padding: 8px; font-size: 11px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SmartOps AI — Living Style Guide</h1>
+    <p style="color: #94a3b8; margin-bottom: 24px;">Offline-first design system shared across Central Hub, Customer Portal, Employee Dashboard, Sales Intelligence, and Voice Agent.</p>
+
+    <h2>1. Brand & Semantic Priority Tokens</h2>
+    <div class="row">
+      <div class="color-swatch" style="background: #4f46e5; color: #fff;">Brand (#4f46e5)</div>
+      <div class="color-swatch" style="background: #dc2626; color: #fff;">P1 Critical (#dc2626)</div>
+      <div class="color-swatch" style="background: #ea580c; color: #fff;">P2 High (#ea580c)</div>
+      <div class="color-swatch" style="background: #ca8a04; color: #fff;">P3 Medium (#ca8a04)</div>
+      <div class="color-swatch" style="background: #16a34a; color: #fff;">P4 Low (#16a34a)</div>
+    </div>
+
+    <h2>2. Priority Badges (Always paired with text labels)</h2>
+    <div class="row">
+      <span class="badge-p1">● P1 Critical (Urgent)</span>
+      <span class="badge-p2">● P2 High (Delayed)</span>
+      <span class="badge-p3">● P3 Medium (General)</span>
+      <span class="badge-p4">● P4 Low (Inquiry)</span>
+      <span class="demo-badge">DEMO LEAD</span>
+      <span class="demo-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">MODE: MOCK</span>
+    </div>
+
+    <h2>3. Buttons & Interactive Controls</h2>
+    <div class="row">
+      <button class="btn btn-primary">Primary Action</button>
+      <button class="btn btn-secondary">Secondary Action</button>
+      <button class="btn btn-primary" style="background: #dc2626;">Escalate Immediately</button>
+    </div>
+
+    <h2>4. Cards & Containers</h2>
+    <div class="card" style="margin-bottom: 16px;">
+      <h3 style="margin-top: 0; font-size: 18px;">Sample Operational Card</h3>
+      <p style="color: #94a3b8; font-size: 14px;">Cards utilize <code>--color-neutral-800</code> surface with subtle 1px border and elevation shadow.</p>
+    </div>
+
+    <h2>5. Collapsible "How It Works" Strip</h2>
+    <div class="how-it-works-strip">
+      <div class="how-it-works-toggle" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+        <span>ℹ️ How Triage Works (Click to collapse/expand)</span>
+        <span>▼</span>
+      </div>
+      <div class="how-it-works-content">
+        <ol>
+          <li><strong>Input</strong>: Customer enters email, order ID, and description.</li>
+          <li><strong>AI Analysis</strong>: Autonomous worker scores sentiment and assigns P1–P4 priority with a verified explanation.</li>
+          <li><strong>Resolution</strong>: High-priority incidents trigger immediate routing to senior engineers.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

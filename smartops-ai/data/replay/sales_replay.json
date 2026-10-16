@@ -1,0 +1,29 @@
+{
+  "lead": {
+    "id": "lead_1",
+    "Name": "Alex Mercer",
+    "First Name": "Alex",
+    "Last Name": "Mercer",
+    "Email": "alex.mercer@apexdynamics.io",
+    "Company": "Apex Dynamics",
+    "Title": "VP of Revenue Operations",
+    "Score": 8.5,
+    "Status": "QUALIFIED",
+    "Notes": "Enterprise retail & multi-location logistics. Perfect ICP fit for RAG & Support triage."
+  },
+  "score": 8.5,
+  "qualification": "qualified",
+  "matched_case_study": "Spark Retail (85% query resolution, $150k quarterly lift)",
+  "generated_reports_count": 9,
+  "reports": [
+    "Blog Analysis Report.txt",
+    "Digital Presence Report.txt",
+    "General Lead Research Report.txt",
+    "Global Lead Analysis Report.txt",
+    "Interview Script.txt",
+    "News Analysis Report.txt",
+    "Outreach Report.txt",
+    "Personalized Email.txt",
+    "Youtube Analysis Report.txt"
+  ]
+}

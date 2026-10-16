@@ -86,6 +86,15 @@ def trigger_run(background_tasks: BackgroundTasks):
     background_tasks.add_task(run_pipeline_task)
     return {"status": "started", "message": "Autonomous sales outreach agent initiated."}
 
+@app.get("/health")
+def health():
+    return {"status": "ok", "service": "sales_agent_module"}
+
+@app.get("/api/mode")
+def api_mode():
+    mode = os.getenv("LLM_MODE", "mock").lower()
+    return {"mode": mode, "service": "sales_agent_module", "degraded": (mode == "mock")}
+
 @app.get("/workflow.png")
 def get_workflow_diagram():
     img_path = BASE_DIR / "workflow.png"
@@ -101,9 +110,6 @@ def index_page():
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartOps AI | Sales Outreach Automation Platform</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-gradient: radial-gradient(circle at 10% 20%, rgb(18, 22, 34) 0%, rgb(10, 13, 20) 90%);

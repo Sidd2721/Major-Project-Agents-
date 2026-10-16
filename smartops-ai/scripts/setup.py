@@ -8,7 +8,12 @@ pins versions. Cross-platform (Windows + macOS/Linux).
 import subprocess, sys, shutil, os
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+# Fix Windows console UTF-8 centrally
+if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+ROOT = Path(__file__).resolve().parent.parent
 WIN = sys.platform == "win32"
 
 def run(cmd, cwd=None, env=None):
@@ -109,6 +114,18 @@ def main():
         copy_env(voice)
     else:
         print("⚠️  gemini-voice-agent not found, skipping")
+
+    # 4. Seed Demo Data
+    print(f"\n{'='*50}")
+    print("🌱 Seeding demo data (12 tickets, 5 leads, replay)...")
+    print(f"{'='*50}")
+    try:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from seed_demo import run_reset
+        res = run_reset()
+        print(f"  ✅ Seeded {res['tickets_seeded']} tickets and {res['leads_seeded']} leads in {res['duration_seconds']}s")
+    except Exception as e:
+        print(f"  ⚠️ Could not seed demo data: {e}")
 
     print("\n" + "="*50)
     print("✅ Setup complete!")

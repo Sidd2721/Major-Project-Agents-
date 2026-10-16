@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartOps AI | Multi-Agent Voice Intelligence Platform</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-gradient: radial-gradient(circle at 10% 20%, rgb(18, 22, 34) 0%, rgb(10, 13, 20) 90%);
@@ -23,7 +20,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Outfit', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg-gradient);
       color: var(--text-main);
       min-height: 100vh;
@@ -408,17 +405,20 @@
       <div class="brand-logo">🎙️</div>
       <div>
         <div class="brand-title">SmartOps AI Voice Platform</div>
-        <div class="brand-subtitle">Pipecat Multi-Agent Conversational AI • Localhost :8765</div>
+        <div class="brand-subtitle">Browser Voice Simulation • Localhost :8765</div>
       </div>
     </div>
     <div class="nav-links">
       <span class="badge badge-success">● ws://localhost:8765 Connected</span>
-      <a class="nav-btn" href="http://localhost:5175" target="_blank">📈 Sales Platform (:5175)</a>
-      <a class="nav-btn" href="http://localhost:5173" target="_blank">🌐 Customer Portal (:5173)</a>
-      <a class="nav-btn" href="http://localhost:5174" target="_blank">📊 Support Dashboard (:5174)</a>
-      <a class="nav-btn" href="http://localhost:8000/docs" target="_blank">⚡ API Docs (:8000)</a>
+      <a class="nav-btn" href="http://localhost:8080" target="_blank">⬡ Hub (:8080)</a>
+      <a class="nav-btn" href="http://localhost:5175" target="_blank">📈 Sales (:5175)</a>
+      <a class="nav-btn" href="http://localhost:5173" target="_blank">🧑 Portal (:5173)</a>
+      <a class="nav-btn" href="http://localhost:5174" target="_blank">📊 Support (:5174)</a>
     </div>
   </header>
+  <div style="background: rgba(234, 179, 8, 0.12); border-bottom: 1px solid rgba(234, 179, 8, 0.3); color: #facc15; font-size: 12px; padding: 6px 16px; text-align: center; font-weight: 600; letter-spacing: 0.02em;">
+    ⚠️ Browser Voice Simulation (Web Speech API & Local WebSocket) • Telephony SIP Integration Planned Next Semester
+  </div>
 
   <div class="main-container">
     <!-- Left Sidebar: Multi-Agent Switcher & Task Presets -->
