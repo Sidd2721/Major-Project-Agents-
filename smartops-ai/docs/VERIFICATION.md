@@ -1,6 +1,6 @@
 # SmartOps AI — Verification & Evidence Report
 
-**Date Generated**: 2026-10-17 02:58:27
+**Date Generated**: 2026-10-17 03:28:44
 **Execution Mode**: `LLM_MODE=mock` (Offline Certified)
 **Operating System**: Windows (Python 3.11)
 
@@ -20,7 +20,7 @@
 | 10 | Auth | Protected routes vs public complaint form | ✅ PASS | 401/403 without creds; public route 200 | `No Auth: HTTP 403 (Forbidden) | With Auth: HTTP 200 | Public Comp` |
 | 11 | Hygiene | Secret scan & gitignore protection | ✅ PASS | No secrets in tracked files; hits logged | `Tracked files safe; .env keys isolated and gitignored` |
 | 12 | Resilience | Zero-key graceful degradation | ✅ PASS | Graceful message, flows still complete | `All 3 services successfully served deterministic fallbacks` |
-| 13 | Reset | POST /demo/reset idempotency | ✅ PASS | Same counts, duration < 5s | `Run 1: 0.057s (12 tkts) | Run 2: 0.01s (12 tkts)` |
+| 13 | Reset | POST /demo/reset idempotency | ✅ PASS | Same counts, duration < 5s | `Run 1: 0.013s (12 tkts) | Run 2: 0.012s (12 tkts)` |
 | 14 | UI | Multi-width layout & zero overflow (1920/1280/768/375) | ✅ PASS | No horizontal scrollbar at 1920/1280/768/375; zero forbidden strings; screenshots saved | `Screenshots saved: 1920/1280/768/375 (Clean text: 0 forbidden str` |
 | 15 | A11y | Accessibility contrast & focus check | ⚠️ UNVERIFIED | Manual screen-reader & contrast check recommended | `Browser headless driver pending user environment setup` |
 | 16 | Style | Design tokens compliance (no new hex) | ✅ PASS | Zero unauthorized hex; shared tokens.css compliance | `Verified shared/ uses standardized tokens (58 valid token definit` |
@@ -142,7 +142,7 @@ All 3 services successfully served deterministic fallbacks
 - **Pass Criterion**: Same counts, duration < 5s
 - **Real Output**:
 ```text
-Run 1: 0.057s (12 tkts) | Run 2: 0.01s (12 tkts)
+Run 1: 0.013s (12 tkts) | Run 2: 0.012s (12 tkts)
 ```
 
 ### Check 14: UI — Multi-width layout & zero overflow (1920/1280/768/375)

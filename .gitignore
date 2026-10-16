@@ -52,3 +52,9 @@ database/
 
 # Git submodule internals
 */.git/
+
+# Legacy root folders (relocated to smartops-ai/)
+/major_project_demo/
+/Major_Project/
+/gemini-voice-agent/
+/sales_agent_module/
