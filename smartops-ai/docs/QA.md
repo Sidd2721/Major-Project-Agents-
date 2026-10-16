@@ -82,3 +82,25 @@
 2. Migration from local SQLite/ChromaDB to hosted PostgreSQL/Supabase with pgvector and Row Level Security.
 3. Central human-in-the-loop escalation approval queue.
 4. Twilio / SIP telephony integration replacing browser voice simulation.
+
+### Q21: How does the Sales Outreach Assistant score with no data or when sources fail?
+**Answer**:
+The scoring engine evaluates the ratio of successfully retrieved data sources to total expected sources (Website, Blog, News, Public Profile, Social). If most sources are unreachable or blocked by anti-bot measures, the assistant never pretends the score is well-evidenced:
+- It caps the confidence level to **Low confidence** and visibly flags: *"Based on X of 5 sources • Low confidence: Most sources could not be verified."*
+- Unqualified or empty profiles are given a low score (e.g. 2.8/10), classified as *"Not a fit right now"*, and an explanatory note is displayed advising the user to check back when the company expands.
+- This prevents false-positive outreach recommendations based on thin or hallucinated data.
+
+### Q22: Is anything sent automatically by the Sales Outreach Assistant?
+**Answer**:
+**No, absolutely nothing is ever sent automatically.**
+The product is intentionally designed as an executive assistant for a busy business owner, not an autonomous spam bot:
+- Every email draft is prominently labelled: *"Draft only. Nothing has been sent."*
+- The business owner must review the draft, can edit it inline, and must explicitly click *"Copy email"* to paste and send it from their own verified email client.
+- The *"Mark as contacted"* button is a manual status toggle that records the outreach timestamp in local CRM state only after the user has taken action.
+
+### Q23: Where do the matching success stories come from?
+**Answer**:
+Matching success stories are retrieved via RAG (Retrieval-Augmented Generation) powered by a local ChromaDB vector database:
+- Past successful client deployments (such as *Spark Retail*, which achieved 85% automated customer query resolution and $150k quarterly revenue lift) are indexed as semantic embeddings.
+- When researching a prospect's industry and operational pain points, the agent queries the vector collection for the closest semantic match.
+- This grounds every generated pitch and call script in verifiable historical outcomes rather than ungrounded marketing claims.

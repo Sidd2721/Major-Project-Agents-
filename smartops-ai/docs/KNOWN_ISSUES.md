@@ -3,11 +3,11 @@
 This document transparently records known constraints, security findings, and recommended manual actions for the user and evaluation panel.
 
 ## 1. Security: Leaked API Keys in Legacy Subdirectories
-- **Symptom**: Automated secret scanner (`scripts/scan_secrets.py`) detected active Groq API keys (`gsk_wcRON2Yf...`) committed inside legacy `.env` files in previous unpolished branches.
+- **Symptom**: Automated secret scanner (`scripts/scan_secrets.py`) detected active Groq API keys committed inside legacy environment files in previous unpolished branches.
 - **Root Cause**: Early exploratory development lacked `.gitignore` enforcement for local environment files.
 - **Remediation**:
   1. All `.env` files are now strictly added to `.gitignore` and `.env.example` templates are provided.
-  2. **USER ACTION REQUIRED**: Go to [console.groq.com](https://console.groq.com/keys), revoke key `gsk_wcRON2Yf...`, and generate a fresh key.
+  2. **USER ACTION REQUIRED**: Go to [console.groq.com](https://console.groq.com/keys), revoke any previously active legacy keys, and generate a fresh key.
   3. Insert the new key into `.env` only when running with `LLM_MODE=live`.
 
 ---

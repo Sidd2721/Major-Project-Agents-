@@ -9,7 +9,7 @@
   3. Voice Simulation Agent (Port 8765)
 
 ## 1. Secret Scan Findings
-- Leaked Groq API keys identified in `.env` files across legacy subdirectories (`gsk_wcRON2Yf...`).
+- Leaked Groq API keys identified in legacy `.env` files.
 - Remediation: Listed in `docs/KNOWN_ISSUES.md` and user advised to rotate. All `.env` files git-ignored.
 
 ## 2. Pinned Package Freezes

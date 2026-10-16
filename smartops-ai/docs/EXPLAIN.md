@@ -12,10 +12,15 @@
 - **Why it matters**: Replaces human triage delays so that emergency hardware defects or broken shipments are flagged and escalated to senior engineers within seconds.
 - **How to verify**: Submit a damaged laptop complaint on `:5173`; watch the worker instantly flag it as a P1 Critical ticket on the employee dashboard at `:5174` with an AI explanation.
 
-### 2. Sales Outreach Agent
-- **What it does**: Executes a 12-node LangGraph state machine that profiles prospective companies across multiple public channels, computes an objective qualification score, and retrieves proven case studies via vector search.
-- **Why it matters**: Eliminates hours of manual SDR research by delivering 9 comprehensive market intelligence reports, personalized SPIN email scripts, and executive call agendas automatically.
-- **How to verify**: Trigger the pipeline on `:5175`; observe plain-English progress tracking, qualification scoring (8.5/10), and the exact matched Spark Retail case study evidence.
+### 2. Sales Outreach Assistant
+- **Who it is for**: An owner of a small business who sells to other businesses and has no time to research every prospect manually.
+- **Job it does**: *"Tell me if this prospect is worth contacting, and give me what I need to contact them."*
+- **The Flow**:
+  1. **Pick a prospect**: Choose from your CRM list or enter a company name and website.
+  2. **Prepare outreach**: Watch real-time plain-English research steps across 5 data sources (website, news, blog, digital profile, social).
+  3. **Get the Verdict & Collateral**: Receive an instant Fit verdict (Good fit / Maybe / Not a fit right now), a fit score out of 10, key reasons, a matching past success story, a tailored first email draft, and a discovery call script.
+  4. **You review & send**: Review, edit inline, copy to clipboard, or mark as contacted. **Nothing is ever sent automatically.** Low-fit prospects are filtered out transparently with advice on when to re-evaluate.
+- **How to verify**: Open `:5175`; select strong-fit prospect Alex Mercer to see an 8.5/10 verdict and draft email; select poor-fit prospect Timmy Small to verify the automatic unqualified filter and polite explanation.
 
 ### 3. Voice Simulation Agent
 - **What it does**: Provides a bidirectional conversational voice console in the browser with two switchable personas (Support Specialist and Enterprise Sales Consultant).

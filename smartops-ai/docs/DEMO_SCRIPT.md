@@ -45,16 +45,33 @@ This script is structured for a college project evaluation or viva. Follow the t
 
 ---
 
-## Minute 3:00 – 5:00: Sales Outreach & RAG Pipeline Demo
-- **Action**: Navigate to Sales Dashboard (`http://localhost:5175`).
-- **Action**: Click "Trigger Pipeline Run".
+## Minute 3:00 – 5:00: Sales Outreach Assistant Demo (Business-Owner Experience)
+- **Action**: Navigate to `http://localhost:5175`.
+- **Expected Screen**: Clean, responsive assistant layout. Top nav shows SmartOps AI brand and MOCK mode badge. Collapsible *"How it works"* strip is visible at the top. Left panel displays 3 demo prospects (`Alex Mercer`, `Elena Rostova`, `Timmy Small`).
 - **What to Say**:
-  > "Our second system is an autonomous 12-node LangGraph state machine. It profiles enterprise accounts, performs automated qualification scoring, and uses ChromaDB vector search to find relevant case studies. Here we see live step-by-step progress events: profiling the prospect, scoring them 8.5/10 (Qualified), and matching the Spark Retail case study."
-- **Visual Evidence**:
-  - Show the progress feed updating in real time.
-  - Open the generated reports tab and review *"Personalized Email"* and *"Interview Script"*.
-  - Point out the evidence citation: *"Spark Retail (85% query resolution, $150k quarterly revenue lift)"*.
-- **Fallback**: If external API limits are exceeded, click "Load Replay Run"; it loads the verified 9-report replay dataset from `data/replay/` instantly with zero API dependencies.
+  > "Our second system is designed specifically for small business owners who sell to other businesses and have zero hours to research prospects manually. The owner's job is simple: 'Tell me if this prospect is worth contacting, and give me what I need to contact them.'"
+- **Step 1: Strong-Fit Prospect (Alex Mercer, Apex Dynamics)**:
+  - **Action**: Select `Alex Mercer` (labelled 'Demo prospect') and click **"Prepare outreach"**.
+  - **What to Say**:
+    > "Watch the live plain-English progress list: reading their website, checking recent news, scoring fit, finding a past success story, and writing the email. In seconds, we receive three clear outcome cards."
+  - **Visual Evidence**:
+    1. **VERDICT Card**: Standout card with green *"Good fit"* badge, **8.5 out of 10** fit score, 3 plain-language reasons, matching success story citation (*"Similar to Spark Retail: Automated 85% of complex customer queries..."*), and data quality line (*"Based on 4 of 5 sources • High confidence"*).
+    2. **EMAIL Draft Card**: Personalized subject and body draft. Notice the prominent label: *"Draft only. Nothing has been sent."*
+    3. **Action**: Click **"Copy email"**; a toast confirmation appears (*"Email draft copied to clipboard"*).
+    4. **Action**: Click **"Mark as contacted"**; button smoothly updates to *"✓ Contacted"*.
+    5. **CALL SCRIPT Card**: Displays consultative opening hook, 3 discovery questions, and 2 anticipated objections with scripted replies.
+- **Step 2: Unqualified Prospect Filtering (Timmy Small, Solo Blogger)**:
+  - **Action**: Select `Timmy Small` in the left list.
+  - **What to Say**:
+    > "Now let's see what happens with a solo blogger or unqualified lead. We click 'Prepare outreach'—and notice our pipeline protects the business owner's time and reputation."
+  - **Visual Evidence**:
+    - Verdict card updates to gray *"Not a fit right now"* badge, **2.8 out of 10** score, and *"Low confidence"* data quality tag (*"Based on 2 of 5 sources"*).
+    - Clear explanation displayed: *"No email draft generated. Outreach is intentionally withheld for low-fit prospects to protect your brand."*
+    - Suggestion what to do: *"Check again after they hire a dedicated support team or expand commercial B2B operations."*
+- **Step 3: Source Verification & Architecture Transparency**:
+  - **Action**: Expand *"Research behind this (5 sources verified)"* accordion: show status for Website, Blog, News, Public Profile, and YouTube (shows friendly message *"This site blocks automated reading, so we skipped it"* with technical detail toggle).
+  - **Action**: Click *"How this works"* in the footer to open the modal. Show the 5-step plain-language overview, then switch to the *"Technical view"* tab to present the 12-node LangGraph state machine diagram.
+- **Fallback**: Works 100% offline in mock/replay mode with zero external API dependencies.
 
 ---
 
