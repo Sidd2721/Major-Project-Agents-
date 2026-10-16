@@ -1,8 +1,8 @@
 # Microsoft Blog Performance Report
 
-**Status:** Data Unavailable
+**Status:** Data unavailable
 **Source:** https://news.microsoft.com/
-**Error:** HTTP 403 Forbidden
+**Notice:** This site blocks automated reading, so we skipped it.
 
 ## **Blog Summary:**
 * **Number of Posts:** 0 (Data could not be retrieved).
@@ -23,7 +23,7 @@
 * **Content Formats:** Unable to recommend specific format changes without current content analysis.
 
 ## **Action Plan:**
-1. **Resolve Access Restrictions:** Investigate why the scraper or user agent is receiving an HTTP 403 error. This may require updating user-agent headers, implementing proper authentication, or using a different data retrieval method (e.g., RSS feeds if available).
+1. **Resolve Access Restrictions:** Automated reading was restricted by the server. This may require updating headers or utilizing structured RSS feeds if available.
 2. **Verify URL Validity:** Confirm that `https://news.microsoft.com/` is the correct and active URL for the blog content intended for analysis.
 3. **Alternative Data Sources:** If direct scraping is blocked, attempt to retrieve data via Microsoft’s official RSS feeds, API endpoints, or third-party content aggregation services.
 4. **Retry Analysis:** Once data access is resolved, re-run the analysis to generate a comprehensive performance report.

@@ -16,7 +16,7 @@ Microsoft maintains a dominant and highly active digital presence, particularly 
 ### **1. Blog (Microsoft News)**
 
 *   **Current State:**
-    *   **Status:** Data Unavailable due to HTTP 403 Forbidden errors.
+    *   **Status:** Data unavailable (automated reading was skipped as access is restricted by server).
     *   **Performance:** Unable to assess post frequency, topic distribution, or engagement metrics.
     *   **Observation:** The technical barrier to accessing `https://news.microsoft.com/` suggests potential issues with user-agent filtering or bot protection that may also affect SEO crawlers or third-party aggregators.
     *   **Relevance:** While specific metrics are missing, the "Recent News" section confirms that the blog is the primary channel for high-level strategic announcements (e.g., OpenAI partnership, Azure Maia expansion).

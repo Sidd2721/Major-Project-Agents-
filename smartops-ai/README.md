@@ -35,17 +35,17 @@ python scripts/setup.py
 Edit each `.env` file **OR** skip this and use mock mode (no AI keys needed):
 ```
 # Customer-Support-Agent/.env
-GROQ_API_KEY=gsk_...
+GROQ_API_KEY=your_groq_key_here
 LLM_MODE=mock        # change to "live" when you have keys
 
 # sales_agent_module/.env
-GROQ_API_KEY=gsk_...
-GEMINI_API_KEY=AIza...
+GROQ_API_KEY=your_groq_key_here
+GEMINI_API_KEY=your_gemini_key_here
 LLM_MODE=mock
 
 # gemini-voice-agent/.env
-GEMINI_API_KEY=AIza...
-GROQ_API_KEY=gsk_...
+GEMINI_API_KEY=your_gemini_key_here
+GROQ_API_KEY=your_groq_key_here
 LLM_MODE=mock
 ```
 

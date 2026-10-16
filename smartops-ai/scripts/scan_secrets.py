@@ -35,10 +35,9 @@ for root, dirs, files in os.walk(ROOT):
         for label, pat in PATTERNS.items():
             for m in pat.finditer(text):
                 # Don't flag placeholders
-                val = m.group()
-                if "YOUR_" in val or "your_" in val or "xxx" in val.lower():
+                if "YOUR_" in val or "your_" in val or "xxx" in val.lower() or "REPLACE" in val:
                     continue
-                hits.append(f"  [{label}] {filepath.relative_to(ROOT)} : ...{val[:12]}...")
+                hits.append(f"  [{label}] {filepath.relative_to(ROOT)}: key pattern found (redacted)")
 
 if hits:
     print("⚠️  POTENTIAL SECRETS FOUND — ROTATE THESE KEYS:")

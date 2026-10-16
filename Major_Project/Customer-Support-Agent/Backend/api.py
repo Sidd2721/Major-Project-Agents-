@@ -141,3 +141,16 @@ def analytics_trends():
     data = get_daily_trend(db)
     db.close()
     return data
+
+
+# ── Health & mode endpoints (used by Hub status dots) ──────────────
+import os as _os
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "service": "customer-support-agent"}
+
+@app.get("/api/mode")
+def api_mode():
+    mode = _os.getenv("LLM_MODE", "live")
+    return {"mode": mode, "service": "customer-support-agent"}

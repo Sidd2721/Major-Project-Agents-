@@ -18,7 +18,8 @@ def get_llm_mode() -> str:
         return mode
     groq_key = os.getenv("GROQ_API_KEY", "").strip()
     gemini_key = os.getenv("GEMINI_API_KEY", "").strip() or os.getenv("GOOGLE_API_KEY", "").strip()
-    if (groq_key and not groq_key.startswith("gsk_REPLACE")) or (gemini_key and not gemini_key.startswith("AIza_REPLACE")):
+    if (groq_key and "REPLACE" not in groq_key and "your_" not in groq_key and len(groq_key) > 15) or \
+       (gemini_key and "REPLACE" not in gemini_key and "your_" not in gemini_key and len(gemini_key) > 15):
         return "live"
     return "mock"
 
@@ -106,33 +107,113 @@ def mock_support_triage(complaint_text: str) -> Dict[str, Any]:
     }
 
 def mock_sales_run(lead_name: str, company: str, is_qualified: bool = True) -> Dict[str, Any]:
-    """Generates realistic structured sales research and outreach."""
-    score = 8.5 if is_qualified else 3.2
+    """Generates realistic structured sales research and outreach with plain-language fields."""
+    if is_qualified:
+        score = 8.5
+        verdict = "Good fit"
+        confidence = "High"
+        reasons = [
+            "Experiencing rapid B2B volume growth with support ticket backlogs",
+            "High-ticket contract value makes operational automation ROI immediate",
+            "Active digital footprint and clear leadership intent around workflow scaling"
+        ]
+        sources = [
+            {"name": "Website", "ok": True, "summary": "Company runs active multi-region operations with digital customer touchpoints.", "reason_if_failed": ""},
+            {"name": "Blog", "ok": True, "summary": "Recent articles discuss scaling customer onboarding and workflow challenges.", "reason_if_failed": ""},
+            {"name": "News", "ok": True, "summary": "Recent press releases announce operational expansion and team growth.", "reason_if_failed": ""},
+            {"name": "Public profile", "ok": True, "summary": f"{lead_name} leads operational strategy and systems modernization.", "reason_if_failed": ""},
+            {"name": "YouTube & social", "ok": False, "summary": "No active dedicated video channel found.", "reason_if_failed": "This site blocks automated reading, so we skipped it"}
+        ]
+        sources_summary = "Based on 4 of 5 sources"
+        matched_story = "Similar to Spark Retail: Automated 85% of complex customer queries while lifting quarterly revenue by $150k."
+        email = {
+            "subject": f"Streamlining {company}'s customer support & operations volume",
+            "body": (
+                f"Hi {lead_name},\n\n"
+                f"I noticed {company} is growing rapidly and handling higher customer inquiry volumes. Many operational leaders face communication delays during rapid scaling.\n\n"
+                f"At SmartOps AI, we help businesses automate triage and customer follow-ups (similar to Spark Retail, which achieved 85% automated query resolution). "
+                f"We'd love to share a 10-minute walkthrough of how our multi-agent workflows could lighten your team's support load.\n\n"
+                f"Would you be open to a brief chat this Thursday?\n\n"
+                f"Best,\nSmartOps AI Sales Team"
+            )
+        }
+        legacy_email = email["body"]
+        call_script = {
+            "opening": f"Hi {lead_name}, this is from SmartOps AI. I've been following {company}'s recent growth—congratulations on the expansion.",
+            "questions": [
+                "How is your operations team currently handling the surge in customer inquiry volume during peak hours?",
+                "What is the biggest operational bottleneck when onboarding new accounts across your customer hubs?",
+                "If you could resolve 80% of routine inquiries automatically, where would your staff redirect their focus?"
+            ],
+            "objections": [
+                {"objection": "We already have an existing CRM / ticketing setup.", "reply": "SmartOps doesn't replace your CRM; it works alongside it to triage tickets and draft responses automatically before your reps touch them."},
+                {"objection": "Our team doesn't have bandwidth for a heavy software implementation.", "reply": "Setup takes under 2 hours with our lightweight API adapters, and there are no complex workflow overhauls required."}
+            ]
+        }
+        poor_fit_advice = None
+        poor_fit_explanation = None
+    else:
+        score = 2.8
+        verdict = "Not a fit right now"
+        confidence = "Low"
+        reasons = [
+            "Solo operator with no customer support queue or dedicated team",
+            "No B2B sales motion or enterprise ticket queue to automate",
+            "Budget and operational requirements do not match an agentic automation platform"
+        ]
+        sources = [
+            {"name": "Website", "ok": True, "summary": "Personal site covering hobby topics and casual personal writing.", "reason_if_failed": ""},
+            {"name": "Blog", "ok": True, "summary": "Informal opinion posts; no corporate products or business services offered.", "reason_if_failed": ""},
+            {"name": "News", "ok": False, "summary": "Search returned zero verified press releases or commercial coverage.", "reason_if_failed": "This site blocks automated reading, so we skipped it"},
+            {"name": "Public profile", "ok": False, "summary": "Profile indicates solo hobbyist without corporate organization.", "reason_if_failed": "This site blocks automated reading, so we skipped it"},
+            {"name": "YouTube & social", "ok": False, "summary": "Personal hobby uploads only without commercial activity.", "reason_if_failed": "This site blocks automated reading, so we skipped it"}
+        ]
+        sources_summary = "Based on 2 of 5 sources"
+        matched_story = "No matching enterprise story applicable."
+        email = None
+        legacy_email = ""
+        call_script = None
+        poor_fit_advice = "Check again after they hire a dedicated support team or expand commercial B2B operations."
+        poor_fit_explanation = "No email was drafted because outreach is not recommended for this prospect. Preparing outreach for low-fit leads wastes time and risks company reputation."
+
     qualification = "qualified" if is_qualified else "unqualified"
-    case_study = "Spark Retail (85% query resolution, 210% engagement lift, $150k quarterly lift)"
+    case_study = matched_story
     
-    email = (
-        f"Subject: Scaling {company}'s operations with autonomous multi-agent pipelines\n\n"
-        f"Hi {lead_name},\n\n"
-        f"I came across {company}'s recent expansion and noticed opportunities to accelerate your customer triage and B2B workflow.\n\n"
-        f"Using our multi-agent architecture (similar to how Spark Retail automated 85% of complex customer queries while lifting revenue by $150k/quarter), "
-        f"SmartOps AI integrates triage, research, and outreach seamlessly.\n\n"
-        f"Would you be open to a brief 10-minute walkthrough this Thursday?\n\n"
-        f"Best,\nSmartOps Sales Intelligence Team"
-    )
-    
+    progress = [
+        {"step": 1, "name": "Reading their website", "status": "done", "reason": "Indexed homepage and overview"},
+        {"step": 2, "name": "Checking recent news", "status": "done" if is_qualified else "skipped", "reason": "Press releases analyzed" if is_qualified else "This site blocks automated reading, so we skipped it"},
+        {"step": 3, "name": "Scoring the fit", "status": "done", "reason": f"Evaluated B2B fit criteria (Score: {score}/10)"},
+        {"step": 4, "name": "Finding a matching success story", "status": "done" if is_qualified else "skipped", "reason": "Retrieved Spark Retail case study" if is_qualified else "Skipped for unqualified prospect"},
+        {"step": 5, "name": "Writing the email", "status": "done" if is_qualified else "skipped", "reason": "Drafted personalized outreach" if is_qualified else "Omitted intentionally: prospect is not a fit right now"}
+    ]
+
     return {
+        # New plain-language result fields
+        "verdict": verdict,
+        "score": score,
+        "score_display": f"{score} out of 10",
+        "confidence": confidence,
+        "reasons": reasons,
+        "sources": sources,
+        "sources_summary": sources_summary,
+        "matched_story": matched_story,
+        "email": email,
+        "call_script": call_script,
+        "poor_fit_advice": poor_fit_advice,
+        "poor_fit_explanation": poor_fit_explanation,
+        "progress": progress,
+        # Legacy compatibility fields
         "lead_name": lead_name,
         "company": company,
         "qualification_status": qualification,
         "lead_score": score,
         "matched_case_study": case_study,
-        "outreach_email": email,
+        "outreach_email": legacy_email,
         "steps": [
-            {"step": 1, "name": "Lead Profiling", "detail": f"Synthesized public business signals for {company}"},
-            {"step": 2, "name": "B2B Qualification", "detail": f"Score {score}/10 -> {qualification.upper()}"},
-            {"step": 3, "name": "RAG Case Study Retrieval", "detail": f"ChromaDB matched '{case_study}'"},
-            {"step": 4, "name": "SPIN Email Synthesis", "detail": "Generated personalized outreach draft"}
+            {"step": 1, "name": "Reading their website", "detail": f"Synthesized public business signals for {company}"},
+            {"step": 2, "name": "Scoring the fit", "detail": f"Score {score}/10 -> {verdict}"},
+            {"step": 3, "name": "Finding a matching success story", "detail": f"Matched '{case_study}'"},
+            {"step": 4, "name": "Writing the email", "detail": "Generated personalized outreach draft" if is_qualified else "Skipped"}
         ],
         "mode": "mock"
     }

@@ -26,7 +26,7 @@ if __name__ == "__main__":
             table_name=os.getenv("AIRTABLE_TABLE_NAME", "Leads"),
         )
     else:
-        print("ℹ️ No Airtable credentials detected in .env. Using built-in test lead (Microsoft / John Doe)...")
+        print("ℹ️ No Airtable credentials detected in .env. Using built-in demo prospects...")
         lead_loader = TestLeadLoader()
     
     # Instantiate the OutReachAutomation class

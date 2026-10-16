@@ -1,62 +1,38 @@
 [
   {
-    "id": "lead_1",
+    "id": "prospect_001",
     "Name": "Alex Mercer",
     "First Name": "Alex",
     "Last Name": "Mercer",
-    "Email": "alex.mercer@apexdynamics.io",
+    "Email": "alex.mercer@example.com",
     "Company": "Apex Dynamics",
-    "Title": "VP of Revenue Operations",
+    "Title": "VP of Operations",
     "Score": 8.5,
-    "Status": "QUALIFIED",
-    "Notes": "Enterprise retail & multi-location logistics. Perfect ICP fit for RAG & Support triage."
+    "Status": "Outreach ready",
+    "Notes": "Growing mid-market B2B distributor experiencing customer support delays and high ticket volume."
   },
   {
-    "id": "lead_2",
+    "id": "prospect_002",
     "Name": "Elena Rostova",
     "First Name": "Elena",
     "Last Name": "Rostova",
-    "Email": "elena.r@fintechcloud.net",
+    "Email": "elena.rostova@example.com",
     "Company": "FinTech Cloud Solutions",
     "Title": "Chief Customer Officer",
-    "Score": 8.2,
-    "Status": "QUALIFIED",
-    "Notes": "High ticket volume, active expansion into EMEA."
+    "Score": 6.8,
+    "Status": "Outreach ready",
+    "Notes": "Evaluating automation solutions, but currently transitioning core ticketing platforms."
   },
   {
-    "id": "lead_3",
-    "Name": "Marcus Vance",
-    "First Name": "Marcus",
-    "Last Name": "Vance",
-    "Email": "marcus.vance@precisionmed.org",
-    "Company": "Precision Medical Diagnostics",
-    "Title": "Head of Technical Support",
-    "Score": 7.9,
-    "Status": "QUALIFIED",
-    "Notes": "Looking to automate clinical hardware ticket classification."
-  },
-  {
-    "id": "lead_4",
-    "Name": "Priya Patel",
-    "First Name": "Priya",
-    "Last Name": "Patel",
-    "Email": "priya.patel@omniretail.in",
-    "Company": "OmniRetail eCommerce",
-    "Title": "Director of Customer Care",
-    "Score": 8.8,
-    "Status": "QUALIFIED",
-    "Notes": "Matches Spark Retail case study benchmarks directly."
-  },
-  {
-    "id": "lead_5",
+    "id": "prospect_003",
     "Name": "Timmy Small",
     "First Name": "Timmy",
     "Last Name": "Small",
-    "Email": "timmy@soloblog.xyz",
-    "Company": "Timmy's Hobby Blog",
-    "Title": "Owner & Blogger",
+    "Email": "timmy@example.com",
+    "Company": "Timmy's Solo Hobby Blog",
+    "Title": "Solo Blogger",
     "Score": 2.8,
-    "Status": "UNQUALIFIED",
-    "Notes": "Solo blogger with zero support volume. Unqualified regression lead."
+    "Status": "Not a fit right now",
+    "Notes": "Individual content creator with zero B2B operations or support staff."
   }
 ]
