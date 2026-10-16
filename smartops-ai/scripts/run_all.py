@@ -36,7 +36,8 @@ def venv_uvicorn(folder):
 
 def port_free(port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(("localhost", port)) != 0
+        s.settimeout(0.5)
+        return s.connect_ex(("127.0.0.1", port)) != 0
 
 def wait_http(url, timeout=30, label=""):
     start = time.time()

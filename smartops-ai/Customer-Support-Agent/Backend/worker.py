@@ -23,17 +23,33 @@ def process_complaints():
 
         # Run agent
         try:
-            result = app.invoke({"complaint_text": c.complaint_text})
+            import os, sys
+            from pathlib import Path
+            mode = os.getenv("LLM_MODE", "mock").lower()
+            groq_key = os.getenv("GROQ_API_KEY", "").strip()
+            if mode == "mock" or not groq_key or "placeholder" in groq_key:
+                root_path = Path(__file__).resolve().parent.parent.parent
+                if str(root_path) not in sys.path:
+                    sys.path.insert(0, str(root_path))
+                from shared.llm_helper import mock_support_triage
+                result = mock_support_triage(c.complaint_text)
+            else:
+                result = app.invoke({"complaint_text": c.complaint_text})
 
             if result.get("is_valid") is False:
-                print(f"🛑 Spam detected: {result['validation_reason']}")
-                mark_complaint_as_spam(db, c.id, result["validation_reason"])
+                print(f"🛑 Spam detected: {result.get('validation_reason')}")
+                mark_complaint_as_spam(db, c.id, result.get("validation_reason"))
                 continue
 
-
         except Exception as e:
-            print(f"❌ Agent failed for complaint {c.id}: {e}")
-            continue
+            print(f"⚠️ Agent live call failed, falling back to mock: {e}")
+            import sys
+            from pathlib import Path
+            root_path = Path(__file__).resolve().parent.parent.parent
+            if str(root_path) not in sys.path:
+                sys.path.insert(0, str(root_path))
+            from shared.llm_helper import mock_support_triage
+            result = mock_support_triage(c.complaint_text)
         
         priority = result.get("reevaluated_priority")
         escalated = result.get("escalation_required")

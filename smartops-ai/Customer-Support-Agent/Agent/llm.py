@@ -7,9 +7,10 @@ load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 
 def get_llm():
-    model_name = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+    model_name = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    key = groq_api_key or os.getenv("GROQ_API_KEY") or "gsk_offline_placeholder_key"
     return ChatGroq(
-        api_key=groq_api_key,
+        api_key=key,
         model=model_name,
         temperature=0
     )
