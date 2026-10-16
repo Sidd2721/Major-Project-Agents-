@@ -1,0 +1,125 @@
+/* ================================================================
+   SmartOps AI — Shared Design Tokens
+   Import this in every UI: <link rel="stylesheet" href="/shared/tokens.css">
+   Or copy into each app's index.css.
+   ================================================================ */
+
+/* ── Brand & Neutral Palette ──────────────────────────────────── */
+:root {
+  --color-brand:          #4f46e5;   /* indigo-600 */
+  --color-brand-dark:     #3730a3;   /* indigo-800 */
+  --color-brand-light:    #818cf8;   /* indigo-400 */
+  --color-brand-subtle:   rgba(79,70,229,.12);
+
+  /* Neutral slate */
+  --color-neutral-50:  #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+  /* Semantic */
+  --color-success:        #16a34a;
+  --color-success-subtle: rgba(22,163,74,.12);
+  --color-warning:        #ca8a04;
+  --color-warning-subtle: rgba(202,138,4,.12);
+  --color-danger:         #dc2626;
+  --color-danger-subtle:  rgba(220,38,38,.12);
+  --color-info:           #0284c7;
+  --color-info-subtle:    rgba(2,132,199,.12);
+
+  /* Priority (always pair with label or icon — never colour alone) */
+  --color-p1:        #dc2626;  /* red   — P1 Critical  */
+  --color-p1-subtle: rgba(220,38,38,.12);
+  --color-p2:        #ea580c;  /* orange — P2 High     */
+  --color-p2-subtle: rgba(234,88,12,.12);
+  --color-p3:        #ca8a04;  /* amber  — P3 Medium   */
+  --color-p3-subtle: rgba(202,138,4,.12);
+  --color-p4:        #16a34a;  /* green  — P4 Low      */
+  --color-p4-subtle: rgba(22,163,74,.12);
+
+  /* ── Typography ──────────────────────────────────────────────── */
+  --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+
+  --text-xs:   12px;   /* captions, badges  */
+  --text-sm:   14px;   /* body secondary    */
+  --text-base: 16px;   /* body              */
+  --text-lg:   20px;   /* subheadings       */
+  --text-xl:   24px;   /* headings          */
+  --text-2xl:  32px;   /* page titles       */
+
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+
+  --line-height-body:    1.5;
+  --line-height-heading: 1.2;
+
+  /* ── Spacing (4px base) ──────────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+
+  /* ── Border Radius ───────────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* ── Shadows (3 levels) ──────────────────────────────────────── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.08);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,.18), 0 4px 8px rgba(0,0,0,.10);
+
+  /* ── Motion ──────────────────────────────────────────────────── */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Reduced motion override ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── SmartOps Shared Component Classes ───────────────────────── */
+
+/* Priority Pills — always include text label */
+.pill { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px 10px; border-radius: 100px; font-size: var(--text-xs); font-weight: var(--weight-semibold); line-height: 1.6; }
+.pill-p1 { background: var(--color-p1-subtle); color: var(--color-p1); border: 1px solid var(--color-p1); }
+.pill-p2 { background: var(--color-p2-subtle); color: var(--color-p2); border: 1px solid var(--color-p2); }
+.pill-p3 { background: var(--color-p3-subtle); color: var(--color-p3); border: 1px solid var(--color-p3); }
+.pill-p4 { background: var(--color-p4-subtle); color: var(--color-p4); border: 1px solid var(--color-p4); }
+
+/* Sentiment Pills */
+.pill-positive { background: var(--color-success-subtle); color: var(--color-success); border: 1px solid var(--color-success); }
+.pill-negative { background: var(--color-danger-subtle);  color: var(--color-danger);  border: 1px solid var(--color-danger);  }
+.pill-neutral  { background: var(--color-warning-subtle); color: var(--color-warning); border: 1px solid var(--color-warning); }
+
+/* Mode Badge */
+.mode-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 100px; font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: .04em; }
+.mode-live  { background: var(--color-success-subtle); color: var(--color-success); border: 1px solid var(--color-success); }
+.mode-mock  { background: var(--color-warning-subtle); color: var(--color-warning); border: 1px solid var(--color-warning); }
+.mode-replay{ background: var(--color-info-subtle);   color: var(--color-info);    border: 1px solid var(--color-info);    }
+
+/* Demo badge */
+.demo-badge { background: var(--color-warning-subtle); color: var(--color-warning); border: 1px solid var(--color-warning); padding: 2px 10px; border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+
+/* Focus ring — apply to all interactive elements */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}

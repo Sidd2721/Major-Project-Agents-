@@ -1,0 +1,25 @@
+{
+  "endpoint": "http://localhost:8000/complaints",
+  "method": "POST",
+  "request_payload": {
+    "email": "sarah.connor@cyberdyne.io",
+    "order_id": "ORD-2060b6",
+    "complaint_text": "The laptop package arrived completely smashed. The screen is shattered and the frame is bent. This is critical for our team kickoff tomorrow, please escalate immediately."
+  },
+  "response": {
+    "message": "Complaint submitted successfully",
+    "complaint_id": "f8a129d4-c941-4821-b4f0-4827110c7159"
+  },
+  "triaged_record": {
+    "id": "f8a129d4-c941-4821-b4f0-4827110c7159",
+    "email": "sarah.connor@cyberdyne.io",
+    "order_id": "ORD-2060b6",
+    "status": "escalated",
+    "priority": "P1",
+    "sentiment": "Negative",
+    "priority_reason": "Physical defect / severe product damage detected with immediate replacement urgency",
+    "escalation_required": true,
+    "email_sent": true,
+    "mode": "mock"
+  }
+}

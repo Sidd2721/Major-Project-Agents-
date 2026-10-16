@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartOps AI — Platform Hub</title>
+  <style>
+    /* ─── Tokens ──────────────────────────────────── */
+    :root {
+      --brand:      #4f46e5;
+      --brand-dark: #3730a3;
+      --success:    #16a34a;
+      --warning:    #ca8a04;
+      --danger:     #dc2626;
+      --neutral-50: #f8fafc;
+      --neutral-100:#f1f5f9;
+      --neutral-200:#e2e8f0;
+      --neutral-400:#94a3b8;
+      --neutral-600:#475569;
+      --neutral-800:#1e293b;
+      --neutral-900:#0f172a;
+      --radius-sm:  6px;
+      --radius-md:  10px;
+      --radius-lg:  16px;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.12);
+      --shadow-md:  0 4px 12px rgba(0,0,0,.15);
+      --shadow-lg:  0 12px 32px rgba(0,0,0,.2);
+      --motion-fast:120ms;
+      --motion-base:200ms;
+      --motion-slow:300ms;
+    }
+
+    /* ─── Reset ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--neutral-900);
+      color: var(--neutral-50);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* ─── Top Nav ─────────────────────────────────── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 60px;
+      background: rgba(15,23,42,.9);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 18px; }
+    .topbar-logo svg { width: 28px; height: 28px; }
+    .topbar-links { display: flex; gap: 8px; }
+    .topbar-links a {
+      padding: 6px 14px; border-radius: var(--radius-sm);
+      font-size: 14px; color: var(--neutral-400);
+      transition: color var(--motion-fast), background var(--motion-fast);
+    }
+    .topbar-links a:hover { color: var(--neutral-50); background: rgba(255,255,255,.07); }
+    .mode-badge {
+      padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600;
+      letter-spacing: .04em; display: flex; align-items: center; gap: 6px;
+    }
+    .mode-badge.live    { background: rgba(22,163,74,.2); color: #4ade80; border: 1px solid rgba(22,163,74,.3); }
+    .mode-badge.mock    { background: rgba(202,138,4,.2);  color: #fbbf24; border: 1px solid rgba(202,138,4,.3);  }
+    .mode-badge.unknown { background: rgba(148,163,184,.2);color: var(--neutral-400); border:1px solid rgba(148,163,184,.2);}
+    .mode-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ─── Hero ────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 72px 24px 48px;
+    }
+    .hero h1 { font-size: clamp(28px,5vw,48px); font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+    .hero h1 span { color: var(--brand); }
+    .hero p { font-size: 18px; color: var(--neutral-400); max-width: 540px; margin: 0 auto 12px; }
+    .hero-sub { font-size: 13px; color: var(--neutral-400); }
+
+    /* ─── Grid ────────────────────────────────────── */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ─── Agent Card ──────────────────────────────── */
+    .card {
+      background: var(--neutral-800);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: transform var(--motion-base), box-shadow var(--motion-base);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      margin-top: 4px; flex-shrink: 0;
+      background: var(--neutral-400);
+      transition: background var(--motion-base);
+    }
+    .status-dot.online  { background: var(--success); box-shadow: 0 0 0 3px rgba(22,163,74,.2); }
+    .status-dot.offline { background: var(--danger);  box-shadow: 0 0 0 3px rgba(220,38,38,.2); }
+
+    .card-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .card-desc   { font-size: 14px; color: var(--neutral-400); line-height: 1.6; }
+    .card-port   { font-size: 12px; color: var(--neutral-400); font-family: monospace; margin-top: 2px; }
+
+    .card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      padding: 9px 18px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 500;
+      border: none; transition: all var(--motion-fast);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-primary:hover { background: var(--brand-dark); }
+    .btn-ghost   { background: rgba(255,255,255,.07); color: var(--neutral-200); }
+    .btn-ghost:hover { background: rgba(255,255,255,.13); }
+    .btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+    /* ─── How It Works Modal ─────────────────────── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--motion-base);
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background: var(--neutral-800); border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-lg); padding: 36px;
+      max-width: 540px; width: calc(100% - 48px);
+      transform: translateY(20px);
+      transition: transform var(--motion-slow);
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .modal-desc  { color: var(--neutral-400); font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+
+    .flow-steps { display: flex; flex-direction: column; gap: 0; }
+    .flow-step  {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .flow-step:last-child { border-bottom: none; }
+    .flow-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--brand); color: #fff;
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .flow-label { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+    .flow-text  { font-size: 13px; color: var(--neutral-400); line-height: 1.5; }
+
+    .modal-close {
+      margin-top: 24px; width: 100%;
+      background: rgba(255,255,255,.07); color: var(--neutral-200);
+      border: none; border-radius: var(--radius-sm);
+      padding: 10px; font-size: 14px; font-weight: 500;
+      transition: background var(--motion-fast);
+    }
+    .modal-close:hover { background: rgba(255,255,255,.13); }
+
+    /* ─── Architecture ────────────────────────────── */
+    .arch-section {
+      max-width: 1100px; margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .section-title { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
+    .arch-box {
+      background: var(--neutral-800);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      font-family: monospace; font-size: 13px; color: var(--neutral-200);
+      line-height: 1.7; overflow-x: auto; white-space: pre;
+    }
+
+    /* ─── Footer ─────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--neutral-400);
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    /* ─── Responsive ─────────────────────────────── */
+    @media (max-width: 768px) {
+      .topbar-links { display: none; }
+      .agents-grid  { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 375px) {
+      .hero h1 { font-size: 22px; }
+      .hero p  { font-size: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, .card, .modal, .modal-backdrop { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav class="topbar" role="navigation" aria-label="Main navigation">
+  <div class="topbar-logo">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <rect width="32" height="32" rx="8" fill="#4f46e5"/>
+      <path d="M8 22 L16 10 L24 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="16" cy="10" r="2" fill="white"/>
+    </svg>
+    SmartOps AI
+  </div>
+  <div class="topbar-links" role="list">
+    <a href="#" role="listitem" aria-current="page">Hub</a>
+    <a href="http://localhost:5173" role="listitem" target="_blank" rel="noopener">Customer Portal</a>
+    <a href="http://localhost:5174" role="listitem" target="_blank" rel="noopener">Employee Dashboard</a>
+    <a href="http://localhost:5175" role="listitem" target="_blank" rel="noopener">Sales</a>
+    <a href="http://localhost:8765" role="listitem" target="_blank" rel="noopener">Voice</a>
+  </div>
+  <div class="mode-badge unknown" id="globalMode" role="status" aria-live="polite">
+    <span class="mode-dot"></span>
+    <span id="modeTxt">Checking…</span>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <h1>SmartOps <span>AI</span> Platform</h1>
+  <p>Three specialised AI agents working together to automate enterprise operations.</p>
+  <p class="hero-sub">College Major Project — Multi-Agent AI Systems</p>
+</header>
+
+<!-- Agent Cards -->
+<main>
+<section class="agents-grid" aria-label="AI Agents">
+
+  <!-- Customer Support -->
+  <article class="card" aria-labelledby="card-support-title">
+    <div class="card-header">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div class="card-icon" style="background:rgba(99,102,241,.15);color:#818cf8">🎫</div>
+        <div>
+          <div class="card-title" id="card-support-title">Customer Support Agent</div>
+          <div class="card-port">:8000 (API) · :5173 (portal) · :5174 (dashboard)</div>
+        </div>
+      </div>
+      <div class="status-dot" id="dot-support" title="Checking status…" role="status" aria-label="Support agent status: checking"></div>
+    </div>
+    <p class="card-desc">
+      Receives customer complaints, automatically classifies sentiment (positive/negative/urgent),
+      assigns a priority level (P1–P4), and routes tickets to the right team — with no manual reading required.
+    </p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="http://localhost:5174" target="_blank" rel="noopener" aria-label="Open Employee Dashboard">
+        📊 Employee Dashboard
+      </a>
+      <a class="btn btn-ghost"    href="http://localhost:5173" target="_blank" rel="noopener" aria-label="Open Customer Portal">
+        🧑 Customer Portal
+      </a>
+      <button class="btn btn-ghost" onclick="openModal('support')" aria-haspopup="dialog" aria-label="How Customer Support Agent works">
+        ❓ How it works
+      </button>
+    </div>
+  </article>
+
+  <!-- Sales Outreach -->
+  <article class="card" aria-labelledby="card-sales-title">
+    <div class="card-header">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div class="card-icon" style="background:rgba(16,185,129,.15);color:#34d399">📈</div>
+        <div>
+          <div class="card-title" id="card-sales-title">Sales Outreach Agent</div>
+          <div class="card-port">:5175 (dashboard)</div>
+        </div>
+      </div>
+      <div class="status-dot" id="dot-sales" title="Checking status…" role="status" aria-label="Sales agent status: checking"></div>
+    </div>
+    <p class="card-desc">
+      Researches a sales lead across the web, scores them (1–10), retrieves relevant case studies
+      from our knowledge base (RAG), and generates a personalised cold email + interview script.
+      Nine intelligence reports are produced per lead.
+    </p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="http://localhost:5175" target="_blank" rel="noopener" aria-label="Open Sales Dashboard">
+        📊 Sales Dashboard
+      </a>
+      <button class="btn btn-ghost" onclick="openModal('sales')" aria-haspopup="dialog" aria-label="How Sales Outreach Agent works">
+        ❓ How it works
+      </button>
+    </div>
+  </article>
+
+  <!-- Voice Agent -->
+  <article class="card" aria-labelledby="card-voice-title">
+    <div class="card-header">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div class="card-icon" style="background:rgba(245,158,11,.15);color:#fbbf24">🎙️</div>
+        <div>
+          <div class="card-title" id="card-voice-title">Voice AI Platform</div>
+          <div class="card-port">:8765</div>
+        </div>
+      </div>
+      <div class="status-dot" id="dot-voice" title="Checking status…" role="status" aria-label="Voice agent status: checking"></div>
+    </div>
+    <p class="card-desc">
+      Two AI personas you can talk to (or type to) in your browser — a Support Specialist and a
+      Sales Consultant. Browser voice simulation, not telephony. Real data injected from the
+      support DB before each reply.
+    </p>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="http://localhost:8765" target="_blank" rel="noopener" aria-label="Open Voice Console">
+        🎙️ Open Voice Console
+      </a>
+      <button class="btn btn-ghost" onclick="openModal('voice')" aria-haspopup="dialog" aria-label="How Voice Platform works">
+        ❓ How it works
+      </button>
+    </div>
+  </article>
+
+  <!-- Planned: Email -->
+  <article class="card" aria-labelledby="card-email-title" style="opacity:.6">
+    <div class="card-header">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div class="card-icon" style="background:rgba(148,163,184,.1);color:var(--neutral-400)">📧</div>
+        <div>
+          <div class="card-title" id="card-email-title">Email Management Agent <span style="font-size:11px;background:rgba(148,163,184,.15);padding:2px 8px;border-radius:100px;vertical-align:middle;margin-left:6px;font-weight:500;color:var(--neutral-400)">PLANNED</span></div>
+          <div class="card-port">Next semester</div>
+        </div>
+      </div>
+    </div>
+    <p class="card-desc">
+      Classifies incoming emails (complaint/inquiry/sales/spam), extracts entities,
+      drafts replies, and hands off to the correct agent. Planned for next semester.
+    </p>
+  </article>
+
+  <!-- Planned: Invoice -->
+  <article class="card" aria-labelledby="card-inv-title" style="opacity:.6">
+    <div class="card-header">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div class="card-icon" style="background:rgba(148,163,184,.1);color:var(--neutral-400)">🧾</div>
+        <div>
+          <div class="card-title" id="card-inv-title">Invoice Management Agent <span style="font-size:11px;background:rgba(148,163,184,.15);padding:2px 8px;border-radius:100px;vertical-align:middle;margin-left:6px;font-weight:500;color:var(--neutral-400)">PLANNED</span></div>
+          <div class="card-port">Next semester</div>
+        </div>
+      </div>
+    </div>
+    <p class="card-desc">
+      OCR-based PDF invoice parsing, LLM field extraction, validation, duplicate detection,
+      and PDF export. Planned for next semester.
+    </p>
+  </article>
+
+</section>
+
+<!-- Architecture diagram -->
+<section class="arch-section" aria-labelledby="arch-title">
+  <h2 class="section-title" id="arch-title">System Architecture</h2>
+  <div class="arch-box" role="img" aria-label="System architecture diagram">
+┌─────────────────────────────────────────────────────────────────┐
+│                    SmartOps AI Platform                          │
+│                                                                 │
+│   ┌─────────────────┐   ┌─────────────────┐   ┌─────────────┐  │
+│   │  Customer        │   │  Sales Outreach │   │  Voice AI   │  │
+│   │  Support Agent   │   │  Agent          │   │  Platform   │  │
+│   │                 │   │                 │   │             │  │
+│   │  FastAPI :8000  │   │  LangGraph      │   │  FastAPI    │  │
+│   │  SQLite DB      │   │  12-node graph  │   │  WebSocket  │  │
+│   │  AI Worker      │   │  ChromaDB RAG   │   │  :8765      │  │
+│   │                 │   │  Groq/Gemini    │   │             │  │
+│   │  React :5173    │   │  FastAPI :5175  │   │  2 personas │  │
+│   │  React :5174    │   │                 │   │             │  │
+│   └────────┬────────┘   └────────┬────────┘   └──────┬──────┘  │
+│            │                    │                    │          │
+│            └────────────────────┴────────────────────┘          │
+│                                 │                               │
+│                    ┌────────────▼────────────┐                  │
+│                    │   Hub :8080             │                  │
+│                    │   Status · Links · Docs │                  │
+│                    └─────────────────────────┘                  │
+│                                                                 │
+│   LLM: Groq (primary) → Gemini → Mock (offline fallback)        │
+│   LLM_MODE=live | mock | replay                                 │
+└─────────────────────────────────────────────────────────────────┘
+  </div>
+</section>
+</main>
+
+<!-- Modals -->
+<div id="modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title-text" tabindex="-1">
+  <div class="modal">
+    <h2 class="modal-title" id="modal-title-text"></h2>
+    <p class="modal-desc" id="modal-desc-text"></p>
+    <div class="flow-steps" id="modal-steps"></div>
+    <button class="modal-close" onclick="closeModal()" aria-label="Close how it works dialog">Close</button>
+  </div>
+</div>
+
+<footer>
+  <p>SmartOps AI · College Major Project · Python 3.11 · FastAPI · LangGraph · React 18</p>
+  <p style="margin-top:6px;color:#64748b">All AI operations run locally. No data leaves your machine.</p>
+</footer>
+
+<script>
+const AGENTS = {
+  support: {
+    title: "How Customer Support Agent Works",
+    desc: "Complaint text comes in → AI reads it → ticket is classified and routed. No human needs to read every ticket.",
+    steps: [
+      { label: "INPUT — Customer submits complaint",
+        text: "Customer visits the portal (:5173), fills in their order ID, email and complaint. The React form POSTs it to FastAPI (:8000)." },
+      { label: "AI DOES — LangGraph triage pipeline",
+        text: "A background worker (main_worker.py) picks up the ticket every 5 s. It runs a LangGraph graph with specialised agents: Sentiment (positive/negative/urgent), Priority (P1–P4), Category (billing/shipping/product…), and Suggested Action. All powered by Groq/Gemini LLM." },
+      { label: "OUTPUT — Triaged ticket visible to staff",
+        text: "The employee dashboard (:5174) shows the ticket with priority colour, sentiment badge, AI-suggested action, and status. Staff assign and resolve." },
+    ]
+  },
+  sales: {
+    title: "How Sales Outreach Agent Works",
+    desc: "Give it a company name → it researches, scores, and writes a personalised sales pitch. 9 reports per lead.",
+    steps: [
+      { label: "INPUT — Lead entered",
+        text: "A lead (name, company, LinkedIn URL or pasted bio) is entered in the Sales Dashboard (:5175). LinkedIn scraping is DISABLED by default — the agent works with provided data + public web signals." },
+      { label: "AI DOES — 12-node LangGraph pipeline",
+        text: "Nodes run in sequence: scrape website → analyse blog/news/YouTube → score lead (1–10) → if qualified: retrieve matching case study from ChromaDB (RAG) → generate outreach report, cold email, and SPIN interview script. Each step shows its progress in plain English." },
+      { label: "OUTPUT — 9 intelligence reports",
+        text: "Reports saved to disk and shown in the dashboard: Outreach Report, Personalised Email, Interview Script, Global Analysis, Digital Presence, Blog, YouTube, News, and General Research." },
+    ]
+  },
+  voice: {
+    title: "How Voice AI Platform Works",
+    desc: "Two AI personalities you can talk to in your browser. Browser voice simulation — not a phone system.",
+    steps: [
+      { label: "INPUT — You speak or type",
+        text: "The web console (:8765) uses your browser's built-in Web Speech API (free, no API key) to convert speech to text. A text input fallback is shown when the microphone is unavailable." },
+      { label: "AI DOES — LLM reply with real context",
+        text: "Your message goes to the FastAPI WebSocket server, which prepends a read-only data snapshot (open ticket counts, P1 alerts, latest lead score) before calling Groq or Gemini. You can switch between two personas: Support Specialist or Sales Consultant." },
+      { label: "OUTPUT — Spoken + typed reply",
+        text: "The AI reply is displayed in the transcript and read aloud using the browser's SpeechSynthesis API (also free and built-in). The active persona, LLM mode, and data sources used are shown at the top." },
+    ]
+  }
+};
+
+function openModal(id) {
+  const a = AGENTS[id]; if (!a) return;
+  document.getElementById('modal-title-text').textContent = a.title;
+  document.getElementById('modal-desc-text').textContent  = a.desc;
+  const stepsEl = document.getElementById('modal-steps');
+  stepsEl.innerHTML = a.steps.map((s,i) => `
+    <div class="flow-step">
+      <div class="flow-num">${i+1}</div>
+      <div>
+        <div class="flow-label">${s.label}</div>
+        <div class="flow-text">${s.text}</div>
+      </div>
+    </div>`).join('');
+  const bd = document.getElementById('modal-backdrop');
+  bd.classList.add('open');
+  bd.focus();
+}
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+}
+document.getElementById('modal-backdrop').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Status pings
+const ENDPOINTS = [
+  { id:'support', url:'http://localhost:8000/docs' },
+  { id:'sales',   url:'http://localhost:5175'     },
+  { id:'voice',   url:'http://localhost:8765'      },
+];
+const MODE_URLS = [
+  'http://localhost:8000/api/mode',
+  'http://localhost:5175/api/mode',
+  'http://localhost:8765/api/mode',
+];
+
+async function pingAll() {
+  for (const e of ENDPOINTS) {
+    const dot = document.getElementById(`dot-${e.id}`);
+    try {
+      const r = await fetch(e.url, {mode:'no-cors', cache:'no-store'});
+      dot.className = 'status-dot online';
+      dot.setAttribute('aria-label', `${e.id} agent: online`);
+    } catch {
+      dot.className = 'status-dot offline';
+      dot.setAttribute('aria-label', `${e.id} agent: offline`);
+    }
+  }
+}
+
+async function checkMode() {
+  const badge  = document.getElementById('globalMode');
+  const txt    = document.getElementById('modeTxt');
+  let mode = null;
+  for (const url of MODE_URLS) {
+    try {
+      const r = await fetch(url, {cache:'no-store'});
+      if (r.ok) { const d = await r.json(); mode = d.mode; break; }
+    } catch {}
+  }
+  badge.className = 'mode-badge ' + (mode ?? 'unknown');
+  txt.textContent = mode ? mode.toUpperCase() : 'OFFLINE';
+}
+
+pingAll(); checkMode();
+setInterval(pingAll, 10000);
+setInterval(checkMode, 15000);
+</script>
+</body>
+</html>

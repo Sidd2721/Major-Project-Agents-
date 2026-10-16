@@ -1,0 +1,20 @@
+{
+  "endpoint": "http://localhost:5175/api/run-pipeline",
+  "lead": {
+    "name": "Alex Mercer",
+    "company": "Apex Dynamics",
+    "role": "VP of Revenue Operations"
+  },
+  "qualification": {
+    "score": 8.5,
+    "status": "qualified",
+    "reason": "Strong market presence, multi-location support bottlenecks, clear ICP fit"
+  },
+  "rag_evidence": {
+    "collection": "sales_case_studies",
+    "matched_study": "Spark Retail",
+    "metrics": "85% automated query resolution, 210% engagement lift, $150k quarterly revenue lift"
+  },
+  "generated_artifacts_count": 9,
+  "mode": "mock"
+}

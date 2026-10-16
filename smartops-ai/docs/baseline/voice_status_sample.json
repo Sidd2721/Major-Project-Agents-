@@ -1,0 +1,12 @@
+{
+  "endpoint": "http://localhost:8765/api/health",
+  "service": "gemini-voice-agent",
+  "status": "ok",
+  "mode": "mock",
+  "active_persona": "SmartOps Support & Resolution Agent",
+  "context_grounding": "Support Database: 12 open tickets recorded (3 pending, 1 critical P1 item)",
+  "sample_turn": {
+    "user": "What is the status of critical tickets?",
+    "bot": "SmartOps AI Support Agent: We currently have 1 critical P1 ticket requiring urgent replacement for order ORD-2060b6, while 2 other requests are in active investigation."
+  }
+}

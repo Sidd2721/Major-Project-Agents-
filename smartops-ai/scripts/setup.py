@@ -1,0 +1,123 @@
+"""
+SmartOps AI — One-command setup.
+Run: python scripts/setup.py
+
+Creates venvs, installs dependencies, copies .env.example -> .env (if missing),
+pins versions. Cross-platform (Windows + macOS/Linux).
+"""
+import subprocess, sys, shutil, os
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent
+WIN = sys.platform == "win32"
+
+def run(cmd, cwd=None, env=None):
+    print(f"  $ {' '.join(str(c) for c in cmd)}")
+    r = subprocess.run(cmd, cwd=cwd, env=env)
+    if r.returncode != 0:
+        print(f"  ❌ FAILED (exit {r.returncode})")
+        sys.exit(r.returncode)
+
+def venv_python(venv_path):
+    if WIN:
+        return venv_path / "Scripts" / "python.exe"
+    return venv_path / "bin" / "python"
+
+def venv_pip(venv_path):
+    if WIN:
+        return venv_path / "Scripts" / "pip.exe"
+    return venv_path / "bin" / "pip"
+
+def setup_venv(name, folder, requirements):
+    print(f"\n{'='*50}")
+    print(f"📦 Setting up: {name}")
+    print(f"{'='*50}")
+    venv = folder / "venv"
+    if not venv.exists():
+        run([sys.executable, "-m", "venv", str(venv)])
+    else:
+        print("  ✓ venv already exists, upgrading pip")
+    run([str(venv_python(venv)), "-m", "pip", "install", "--upgrade", "pip", "-q"])
+    run([str(venv_pip(venv)), "install", "-r", str(requirements), "-q"])
+    print(f"  ✅ {name} ready")
+    return venv
+
+def copy_env(folder):
+    env_ex = folder / ".env.example"
+    env_f  = folder / ".env"
+    if env_ex.exists() and not env_f.exists():
+        shutil.copy(env_ex, env_f)
+        print(f"  📋 Copied .env.example -> .env in {folder.name}")
+    elif not env_f.exists():
+        env_f.write_text("# Add your keys here\nGROQ_API_KEY=\nGEMINI_API_KEY=\nLLM_MODE=mock\n")
+        print(f"  📋 Created empty .env in {folder.name}")
+
+def setup_node(name, folder):
+    if not (folder / "package.json").exists():
+        return
+    nm = folder / "node_modules"
+    if nm.exists():
+        print(f"  ✓ {name} node_modules already installed")
+        return
+    print(f"\n{'='*50}")
+    print(f"📦 npm install: {name}")
+    print(f"{'='*50}")
+    run(["npm", "install", "--prefer-offline"], cwd=folder)
+    print(f"  ✅ {name} npm ready")
+
+def main():
+    print("\n🚀 SmartOps AI — Setup")
+    print("=" * 50)
+
+    # 1. Customer Support Agent
+    csa = ROOT / "Customer-Support-Agent"
+    if csa.exists():
+        setup_venv("Customer Support Agent", csa, csa / "requirements.txt")
+        copy_env(csa)
+        # React frontends
+        for ui in ["Frontend/customer", "Frontend/employee-dashboard"]:
+            p = csa / ui
+            if p.exists():
+                setup_node(f"Customer UI — {ui.split('/')[-1]}", p)
+    else:
+        print("⚠️  Customer-Support-Agent not found, skipping")
+
+    # 2. Sales Agent
+    sales = ROOT / "sales_agent_module"
+    if sales.exists():
+        setup_venv("Sales Outreach Agent", sales, sales / "requirements.txt")
+        copy_env(sales)
+    else:
+        print("⚠️  sales_agent_module not found, skipping")
+
+    # 3. Voice Agent
+    voice = ROOT / "gemini-voice-agent"
+    if voice.exists():
+        # Uses uv — fall back to venv
+        uv = shutil.which("uv")
+        if uv:
+            print(f"\n{'='*50}")
+            print("📦 Setting up: Voice Agent (uv)")
+            print(f"{'='*50}")
+            run([uv, "sync"], cwd=voice)
+        else:
+            req = voice / "requirements.txt"
+            if not req.exists():
+                # Extract from pyproject.toml
+                req.write_text("fastapi\nuvicorn\npython-dotenv\nhttpx\ngoogle-generativeai\ngroq\n")
+            setup_venv("Voice Agent", voice, req)
+        copy_env(voice)
+    else:
+        print("⚠️  gemini-voice-agent not found, skipping")
+
+    print("\n" + "="*50)
+    print("✅ Setup complete!")
+    print()
+    print("Next steps:")
+    print("  1. Edit .env files in each folder and add your API keys")
+    print("     OR set LLM_MODE=mock to run offline (no keys needed)")
+    print("  2. Run: python scripts/run_all.py")
+    print("="*50)
+
+if __name__ == "__main__":
+    main()
